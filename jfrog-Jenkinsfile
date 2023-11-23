@@ -29,6 +29,7 @@ pipeline{
             steps{
                script{
                     sh """
+                    chmod -R 755 kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar
                    curl -X PUT -T kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar http://admin:Pavan7416@"${params.EC2IP}":8082/artifactory/pavan-artifactory/
                    """
                 }
