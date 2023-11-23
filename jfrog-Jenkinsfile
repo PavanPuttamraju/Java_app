@@ -28,8 +28,10 @@ pipeline{
          when { expression {  params.action == 'create' } }
             steps{
                script{
+                    sh """
                    curl -X PUT -u admin -p Pavan7416 -T kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar http://"${params.EC2IP}":8082/artifactory/pavan-artifactory/
-               }
+                   """
+                }
             }
         }   
     }
