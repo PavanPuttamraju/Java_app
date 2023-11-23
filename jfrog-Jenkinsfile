@@ -1,0 +1,36 @@
+@Library('my-shared-library') _
+
+pipeline{
+    agent any
+    parameters{
+        choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
+        string(name: 'EC2IP', description: "give your EC2 instance public IP address", defaultValue: '3.101.36.239')
+    }
+    stages{
+        stage('Git Checkout'){
+            when { expression {  params.action == 'create' } }
+            steps{
+            gitCheckout(
+                branch: "main",
+                url: "https://github.com/PavanPuttamraju/Java_app.git"
+            )
+            }
+        }
+        stage('Maven Build : maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
+                   mvnBuild()
+               }
+            }
+        }
+         stage('Image push to Jfrog  through Automation'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
+                   curl -X PUT -u admin -p Pavan7416 -T kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar http://"${params.EC2IP}":8082/artifactory/pavan-artifactory/
+               }
+            }
+        }   
+    }
+}
