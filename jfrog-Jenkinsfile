@@ -36,7 +36,7 @@ pipeline{
                     withCredentials([usernamePassword(credentialsId: 'jfrog-credentials', passwordVariable: 'password', usernameVariable: 'username')]) {
                     sh """
                     cd target
-                    curl -X PUT -T kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar http://admin:Pavan7416@"${params.EC2IP}":8082/artifactory/pavan-artifactory/
+                    curl -X PUT -T kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar http://${username}:${password}@"${params.EC2IP}":8082/artifactory/pavan-artifactory/
                    """
                 }
             }
