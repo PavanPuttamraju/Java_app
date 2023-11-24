@@ -6,6 +6,12 @@ pipeline{
         choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
         string(name: 'EC2IP', description: "give your EC2 instance public IP address", defaultValue: '3.83.41.17')
     }
+    options{
+        timeout(time: 2, unit: 'HOURS')
+        ansiColor('xterm')
+        disableConcurrentBuilds()
+        timestamps()
+    }
     stages{
         stage('Git Checkout'){
             when { expression {  params.action == 'create' } }
@@ -28,13 +34,13 @@ pipeline{
          when { expression {  params.action == 'create' } }
             steps{
                script{
+                    withCredentials([usernamePassword(credentialsId: 'jfrog-credentials', passwordVariable: 'password', usernameVariable: 'username')]) {
                     sh """
-                    ls -lrta
                     cd target
-                    ls -ltra
                     curl -X PUT -T kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar http://admin:Pavan7416@"${params.EC2IP}":8082/artifactory/pavan-artifactory/
                    """
                 }
+            }
             }
         }   
     }
